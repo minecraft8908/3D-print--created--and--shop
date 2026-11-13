@@ -1,0 +1,7 @@
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*.stl"
+  [headers.values]
+    Content-Type = "model/stl"

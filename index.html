@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101510">
+  <meta name="description" content="Zaprojektuj prosty model 3D do druku, pobierz STL lub prześlij projekt do wyceny.">
+  <title>Forma — studio druku 3D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#start" aria-label="Forma — strona główna"><span class="brand-icon">f.</span><span>forma<span class="brand-dot">/</span>druk</span></a>
+    <nav aria-label="Nawigacja główna"><a href="#studio">Studio 3D</a><a href="#jak-to-dziala">Jak to działa</a><a class="nav-cta" href="#zamow">Wyślij projekt <span>↗</span></a></nav>
+  </header>
+
+  <main id="start">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-line"></span> DRUK 3D, KTÓRY ZACZYNA SIĘ OD CIEBIE</p>
+        <h1>Pomysł nabiera<br><span>kształtu.</span></h1>
+        <p class="hero-lead">Stwórz prosty model w przeglądarce, pobierz plik STL i prześlij go do wyceny. Bez instalowania programów.</p>
+        <a class="button button-dark" href="#studio">Otwórz studio <span>↓</span></a>
+        <div class="hero-note"><span class="note-check">✓</span> Podgląd 3D · Eksport STL · Wycena projektu</div>
+      </div>
+      <div class="hero-art" aria-label="Abstrakcyjna ilustracja modelu 3D">
+        <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+        <div class="art-cube"><i></i><b></b><em></em></div>
+        <div class="art-label label-top">IDEA → OBIEKT</div><div class="art-label label-bottom">ZAPROJEKTUJ · WYDRUKUJ</div>
+        <span class="spark spark-a">✳</span><span class="spark spark-b">✳</span>
+      </div>
+    </section>
+
+    <section class="studio-section" id="studio">
+      <div class="section-heading"><div><p class="eyebrow">01 / TWOJE STUDIO</p><h2>Zacznij od kształtu.</h2></div><p>Wybierz gotową bazę, dostosuj wymiary i obejrzyj model z każdej strony.</p></div>
+      <div class="studio-grid">
+        <aside class="editor panel">
+          <div class="panel-title"><span class="step-number">01</span><div><h3>Edytor modelu</h3><p>Ustaw bazę i wymiary</p></div></div>
+          <div class="field-label">GOTOWE MODELE</div>
+          <div class="preset-list" role="group" aria-label="Gotowe modele">
+            <button type="button" class="preset active" data-preset="tag"><span class="preset-icon">▱</span><span><b>Brelok</b><small>Prosty zawieszek</small></span><span class="preset-arrow">↗</span></button>
+            <button type="button" class="preset" data-preset="plate"><span class="preset-icon">▰</span><span><b>Tabliczka</b><small>Personalizowana forma</small></span><span class="preset-arrow">↗</span></button>
+            <button type="button" class="preset" data-preset="coaster"><span class="preset-icon">◉</span><span><b>Podstawka</b><small>Okrągły projekt</small></span><span class="preset-arrow">↗</span></button>
+          </div>
+          <div class="divider"></div>
+          <label class="control-label" for="width">Szerokość <output id="width-value">60 mm</output></label>
+          <input id="width" type="range" min="25" max="120" value="60">
+          <label class="control-label" for="depth">Głębokość <output id="depth-value">38 mm</output></label>
+          <input id="depth" type="range" min="20" max="100" value="38">
+          <label class="control-label" for="thickness">Grubość <output id="thickness-value">5 mm</output></label>
+          <input id="thickness" type="range" min="2" max="15" value="5">
+          <label class="control-label color-label" for="color">Kolor podglądu <input id="color" type="color" value="#b8f36b" aria-label="Kolor modelu"></label>
+          <div class="editor-actions"><button id="download" type="button" class="button button-light">Pobierz STL <span>↓</span></button><button id="reset" type="button" class="reset-button" aria-label="Przywróć ustawienia">↺</button></div>
+          <p class="editor-hint">Wymiary są podane w milimetrach. Kolor jest widoczny tylko w podglądzie.</p>
+        </aside>
+
+        <div class="preview panel">
+          <div class="preview-top"><span class="live-indicator"><i></i> PODGLĄD NA ŻYWO</span><span id="model-name">BRELOK / 01</span></div>
+          <div id="viewer" aria-label="Interaktywny podgląd modelu 3D"></div>
+          <div class="preview-bottom"><span>PRZECIĄGNIJ, ABY OBRÓCIĆ</span><span id="dimensions">60 × 38 × 5 mm</span></div>
+        </div>
+
+        <aside class="order panel" id="zamow">
+          <div class="panel-title"><span class="step-number">02</span><div><h3>Poproś o wycenę</h3><p>Projekt trafi do formularzy Netlify</p></div></div>
+          <p class="order-intro">Podaj kontakt i krótko opisz, czego potrzebujesz. Do zgłoszenia dołączymy aktualny model STL.</p>
+          <form name="wycena-3d" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" enctype="multipart/form-data" action="/dziekujemy.html">
+            <input type="hidden" name="form-name" value="wycena-3d">
+            <p class="honeypot"><label>Nie wypełniaj tego pola: <input name="bot-field"></label></p>
+            <label class="form-label">Imię<input type="text" name="imie" placeholder="Jak się do Ciebie zwracać?" autocomplete="name" required></label>
+            <label class="form-label">Adres e-mail<input type="email" name="email" placeholder="ty@przyklad.pl" autocomplete="email" required></label>
+            <label class="form-label">Opowiedz o projekcie<textarea name="opis" rows="3" placeholder="Do czego ma służyć? Jaki materiał lub kolor Cię interesuje?"></textarea></label>
+            <label class="file-label"><span class="file-icon">↥</span><span><b id="file-name">Model STL zostanie dołączony</b><small>Wygeneruj model w edytorze przed wysłaniem.</small></span></label>
+            <input id="model-file" type="file" name="model-stl" accept=".stl,model/stl" required hidden>
+            <label class="consent"><input type="checkbox" name="zgoda-kontakt" value="tak" required><span>Wyrażam zgodę na kontakt w sprawie wyceny i przetwarzanie danych podanych w formularzu.</span></label>
+            <button class="button button-dark submit-button" type="submit">Wyślij do wyceny <span>↗</span></button>
+            <p class="form-footnote">Wysłanie formularza nie oznacza złożenia zamówienia. Odpowiemy na podany adres e-mail.</p>
+          </form>
+        </aside>
+      </div>
+    </section>
+
+    <section class="how-section" id="jak-to-dziala">
+      <div class="section-heading"><div><p class="eyebrow">02 / OD POMYSŁU DO WYDRUKU</p><h2>Trzy proste kroki.</h2></div></div>
+      <div class="steps"><article><span>01</span><h3>Wybierz i dopasuj</h3><p>Użyj gotowego modelu i zmień jego wymiary w edytorze.</p></article><article><span>02</span><h3>Prześlij do wyceny</h3><p>Wypełnij formularz. Dołączymy do niego wygenerowany plik STL.</p></article><article><span>03</span><h3>Ustalimy szczegóły</h3><p>Skontaktujemy się, by omówić materiał, termin i koszt wydruku.</p></article></div>
+    </section>
+  </main>
+  <footer><a class="brand" href="#start"><span class="brand-icon">f.</span><span>forma<span class="brand-dot">/</span>druk</span></a><span>Prototypowanie zaczyna się od pomysłu.</span><a href="#studio">Wróć do studia ↑</a></footer>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
