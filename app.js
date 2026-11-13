@@ -136,7 +136,7 @@ function createModel() {
       loop.rotation.x = Math.PI / 2;
     }
   }
-  placedShapes.forEach((shape, index) => {
+  placedShapes.forEach((shape) => {
     const mesh = addMesh(geometryFor(shape), t / 2 + shape.height / 2, shape.color);
     mesh.position.x = shape.x;
     mesh.position.z = shape.z;
@@ -202,14 +202,11 @@ function updateModel() {
   attachModelFile();
 }
 function addShape(type) {
-  const baseHeight = Number(thicknessControl.value);
   const shape = {
     id: nextShapeId++, type,
     width: 14, depth: 14, height: 8,
     x: 0, z: 0, color: colorControl.value
   };
-  // Place each new primitive at the center of the build plate and raise it
-  // onto the plate surface. The sliders below edit the selected object.
   placedShapes.push(shape);
   selectedShapeId = shape.id;
   updateModel();
@@ -276,12 +273,16 @@ document.querySelectorAll('.swatch').forEach(button => button.addEventListener('
 }));
 document.querySelector('#download').addEventListener('click', () => {
   const file = attachModelFile();
+  const url = generatedFileUrl;
+  if (!url) return;
   const link = document.createElement('a');
-  link.href = generatedFileUrl;
+  link.href = url;
   link.download = file.name;
+  link.rel = 'noopener';
   document.body.appendChild(link);
   link.click();
   link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
 });
 form.addEventListener('submit', event => {
   if (!fileInput.files.length) {
