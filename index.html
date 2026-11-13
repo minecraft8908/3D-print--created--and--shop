@@ -52,7 +52,17 @@
           <input id="depth" type="range" min="20" max="100" value="38">
           <label class="control-label" for="thickness">Grubość <output id="thickness-value">5 mm</output></label>
           <input id="thickness" type="range" min="2" max="15" value="5">
-          <label class="control-label color-label" for="color">Kolor podglądu <input id="color" type="color" value="#b8f36b" aria-label="Kolor modelu"></label>
+          <label class="control-label color-label" for="color">Kolor podglądu</label>
+          <div class="color-controls">
+            <input id="color" type="color" value="#b8f36b" aria-label="Kolor modelu">
+            <div class="swatches" aria-label="Szybkie kolory">
+              <button type="button" class="swatch active" data-color="#b8f36b" style="--swatch:#b8f36b" aria-label="Zielony"></button>
+              <button type="button" class="swatch" data-color="#5de6ff" style="--swatch:#5de6ff" aria-label="Niebieski"></button>
+              <button type="button" class="swatch" data-color="#ff7ec7" style="--swatch:#ff7ec7" aria-label="Różowy"></button>
+              <button type="button" class="swatch" data-color="#ffb454" style="--swatch:#ffb454" aria-label="Pomarańczowy"></button>
+              <button type="button" class="swatch" data-color="#8df0c6" style="--swatch:#8df0c6" aria-label="Mint"></button>
+            </div>
+          </div>
           <div class="editor-actions"><button id="download" type="button" class="button button-light">Pobierz STL <span>↓</span></button><button id="reset" type="button" class="reset-button" aria-label="Przywróć ustawienia">↺</button></div>
           <p class="editor-hint">Wymiary są podane w milimetrach. Kolor jest widoczny tylko w podglądzie.</p>
         </aside>
