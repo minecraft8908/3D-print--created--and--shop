@@ -47,11 +47,9 @@ const thicknessControl = document.querySelector('#thickness');
 const form = document.querySelector('form[name="wycena-3d"]');
 const fileInput = document.querySelector('#model-file');
 
-// Shape tools are inserted into the preview so you can select a primitive,
-// then click on the 3D work area to place it on the model.
 const toolbar = document.createElement('div');
 toolbar.className = 'shape-tools';
-toolbar.innerHTML = '<div class="shape-tools-buttons"><span class="shape-tools-label">DODAJ KSZTAŁT</span><button type="button" data-shape="box">＋ Sześcian</button><button type="button" data-shape="cylinder">＋ Walec</button><button type="button" data-shape="sphere">＋ Kula</button><button type="button" data-shape="cancel" class="shape-cancel" hidden>Anuluj</button></div><span class="shape-hint" aria-live="polite">Wybierz kształt, a potem kliknij miejsce na podglądzie.</span>';
+toolbar.innerHTML = '<div class="shape-tools-buttons"><span class="shape-tools-label">DODAJ KSZTAŁT</span><button type="button" data-shape="box">＋ Kwadrat</button><button type="button" data-shape="cylinder">＋ Koło</button><button type="button" data-shape="sphere">＋ Kula</button><button type="button" data-shape="triangle">＋ Trójkąt</button><button type="button" data-shape="drop">＋ Kropla</button><button type="button" data-shape="cancel" class="shape-cancel" hidden>Anuluj</button></div><span class="shape-hint" aria-live="polite">Wybierz kształt, a potem kliknij miejsce na podglądzie.</span>';
 viewer.parentElement.insertBefore(toolbar, viewer);
 const toolbarStyle = document.createElement('style');
 toolbarStyle.textContent = `.shape-tools{padding:10px 14px;background:rgba(15,23,36,.94);border-bottom:1px solid rgba(255,255,255,.08)}.shape-tools-buttons{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.shape-tools-label{margin-right:4px;color:#b4bfd1;font:700 8px 'DM Sans',sans-serif;letter-spacing:1px}.shape-tools button{padding:7px 9px;border:1px solid rgba(255,255,255,.12);border-radius:6px;background:#1a2939;color:#edf7ff;font:600 9px 'DM Sans',sans-serif;cursor:pointer}.shape-tools button:hover,.shape-tools button[aria-pressed=true]{border-color:#b8f36b;background:rgba(184,243,107,.14);color:#dffeb7}.shape-tools .shape-cancel{border-color:rgba(255,126,126,.3);color:#ffb1b1}.shape-hint{display:block;margin-top:7px;color:#9eabc0;font:400 9px 'DM Sans',sans-serif}.shape-placement-active #viewer canvas{cursor:crosshair}`;
@@ -84,6 +82,20 @@ function roundedPlate(width, depth, thickness, radius = 3) {
 function makePlacedGeometry(type, size) {
   if (type === 'box') return new THREE.BoxGeometry(size, size, size);
   if (type === 'cylinder') return new THREE.CylinderGeometry(size / 2, size / 2, size, 32);
+  if (type === 'triangle') {
+    const geometry = new THREE.ConeGeometry(size / 2, size, 3);
+    geometry.rotateX(Math.PI);
+    return geometry;
+  }
+  if (type === 'drop') {
+    const shape = new THREE.Shape();
+    shape.moveTo(0, size / 2);
+    shape.bezierCurveTo(size / 2, size / 2, size / 1.8, -size / 5, 0, -size / 2);
+    shape.bezierCurveTo(-size / 1.8, -size / 5, -size / 2, size / 2, 0, size / 2);
+    const geometry = new THREE.ExtrudeGeometry(shape, { depth: size * 0.6, bevelEnabled: false });
+    geometry.rotateX(Math.PI / 2);
+    return geometry;
+  }
   return new THREE.SphereGeometry(size / 2, 32, 20);
 }
 function createModel() {
@@ -101,9 +113,12 @@ function createModel() {
     }
   }
   for (const shape of placedShapes) {
-    const mesh = addMesh(makePlacedGeometry(shape.type, shape.size), t / 2 + shape.size / 2);
+    const size = shape.size;
+    const mesh = addMesh(makePlacedGeometry(shape.type, size), t / 2 + size / 2);
     mesh.position.x = shape.x;
     mesh.position.z = shape.z;
+    mesh.rotation.x = shape.rotX || 0;
+    mesh.rotation.y = shape.rotY || 0;
   }
   modelRoot.rotation.y = -0.12;
   updateLabels();
@@ -168,8 +183,15 @@ renderer.domElement.addEventListener('pointerup', event => {
   const ground = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
   const point = new THREE.Vector3();
   if (!raycaster.ray.intersectPlane(ground, point)) return;
-  const size = Math.max(6, Math.min(16, Number(thicknessControl.value) * 2));
-  placedShapes.push({ type: placementType, x: point.x, z: point.z, size });
+  const size = Math.max(6, Math.min(18, Number(thicknessControl.value) * 2.5));
+  placedShapes.push({
+    type: placementType,
+    x: point.x,
+    z: point.z,
+    size,
+    rotX: placementType === 'drop' ? Math.PI / 2 : 0,
+    rotY: placementType === 'triangle' ? Math.PI / 6 : 0
+  });
   setPlacement(null);
   updateModel();
 });
@@ -186,8 +208,15 @@ document.querySelector('#reset').addEventListener('click', () => {
   preset = 'tag'; placedShapes.length = 0; setPlacement(null);
   widthControl.value = 60; depthControl.value = 38; thicknessControl.value = 5; colorControl.value = '#b8f36b';
   document.querySelectorAll('.preset').forEach(item => item.classList.toggle('active', item.dataset.preset === preset));
+  document.querySelectorAll('.swatch').forEach(item => item.classList.toggle('active', item.dataset.color === '#b8f36b'));
   updateModel();
 });
+document.querySelectorAll('.swatch').forEach(button => button.addEventListener('click', () => {
+  document.querySelectorAll('.swatch').forEach(item => item.classList.remove('active'));
+  button.classList.add('active');
+  colorControl.value = button.dataset.color;
+  updateModel();
+}));
 document.querySelector('#download').addEventListener('click', () => {
   const file = attachModelFile();
   const link = document.createElement('a');
